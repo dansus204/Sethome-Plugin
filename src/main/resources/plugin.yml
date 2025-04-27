@@ -1,0 +1,17 @@
+name: untitled
+version: '1.0-SNAPSHOT'
+main: dansus204.Sethome
+api-version: '1.20'
+
+commands:
+  sethome:
+    description: Sets home point for player
+    permission: sethome
+  home:
+    description: Teleports player to their home
+    permission: sethome
+
+permissions:
+  zombies:
+    default: not op
+    description: Gives access to sethome
