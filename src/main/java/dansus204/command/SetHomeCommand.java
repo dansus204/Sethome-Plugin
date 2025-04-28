@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public final class SetHomeCommand implements CommandExecutor {
@@ -28,17 +29,19 @@ public final class SetHomeCommand implements CommandExecutor {
         final Location location = player.getLocation();
 
         if (player.getWorld().getEnvironment() != World.Environment.NORMAL) {
-            player.sendMessage(Component.text("Точку дома можно установить только в верхнем мире"));
+            player.sendMessage(Component.text(Objects.requireNonNull(Sethome.getInstance().getConfig().getString("SETHOME_OVERWORLD_ERROR_MESSAGE"))));
             return false;
         }
 
 
         CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(
-                () -> Sethome.INSTANCE.getDatabaseExecutor().addPoint(player, location)
+                () -> Sethome.getInstance().getDatabaseExecutor().addPoint(player, location)
         );
 
         future.thenAccept((success) ->
-                player.sendMessage(Component.text(success? "Точка дома сохранена" : "Не удалось сохранить точку дома"))
+                player.sendMessage(Component.text(Objects.requireNonNull(success ?
+                        Sethome.getInstance().getConfig().getString("SETHOME_SUCCESS_MESSAGE") :
+                        Sethome.getInstance().getConfig().getString("SETHOME_FAILED_MESSAGE"))))
         );
 
         return false;

@@ -1,0 +1,8 @@
+NO_HOMEPOINT_MESSAGE: "Точка дома не установлена"
+SETHOME_SUCCESS_MESSAGE: "Точка дома сохранена"
+SETHOME_FAILED_MESSAGE: "Не удалось сохранить точку дома"
+TELEPORT_START_MESSAGE: "Телепортация..."
+TELEPORT_FINISH_MESSAGE: "Телепортация прошла успешно"
+SETHOME_OVERWORLD_ERROR_MESSAGE: "Точку дома можно установить только в верхнем мире"
+HOME_OVERWORLD_ERROR_MESSAGE: "Телепортироваться можно только в верхнем мире"
+TELEPORT_TIMER: 3
