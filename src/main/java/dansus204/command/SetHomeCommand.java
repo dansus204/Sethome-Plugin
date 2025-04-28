@@ -2,6 +2,7 @@ package dansus204.command;
 
 
 import dansus204.Sethome;
+import dansus204.database.DatabaseExecutor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -16,6 +17,15 @@ import java.util.concurrent.CompletableFuture;
 
 public final class SetHomeCommand implements CommandExecutor {
 
+    private final DatabaseExecutor databaseExecutor;
+    private final Sethome pluginInstance;
+
+    public SetHomeCommand(DatabaseExecutor executor, Sethome pluginInstance) {
+        this.databaseExecutor = executor;
+        this.pluginInstance = pluginInstance;
+    }
+
+
     @Override
     public boolean onCommand(
             @NotNull CommandSender sender,
@@ -29,19 +39,19 @@ public final class SetHomeCommand implements CommandExecutor {
         final Location location = player.getLocation();
 
         if (player.getWorld().getEnvironment() != World.Environment.NORMAL) {
-            player.sendMessage(Component.text(Objects.requireNonNull(Sethome.getInstance().getConfig().getString("SETHOME_OVERWORLD_ERROR_MESSAGE"))));
+            player.sendMessage(Component.text(Objects.requireNonNull(pluginInstance.getConfig().getString("SETHOME_OVERWORLD_ERROR_MESSAGE"))));
             return false;
         }
 
 
         CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(
-                () -> Sethome.getInstance().getDatabaseExecutor().addPoint(player, location)
+                () -> databaseExecutor.addPoint(player, location)
         );
 
         future.thenAccept((success) ->
                 player.sendMessage(Component.text(Objects.requireNonNull(success ?
-                        Sethome.getInstance().getConfig().getString("SETHOME_SUCCESS_MESSAGE") :
-                        Sethome.getInstance().getConfig().getString("SETHOME_FAILED_MESSAGE"))))
+                        pluginInstance.getConfig().getString("SETHOME_SUCCESS_MESSAGE") :
+                        pluginInstance.getConfig().getString("SETHOME_FAILED_MESSAGE"))))
         );
 
         return false;

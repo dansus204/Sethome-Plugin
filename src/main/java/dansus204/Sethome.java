@@ -8,19 +8,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Sethome extends JavaPlugin {
 
-    private static Sethome insnatce;
-
-    private DatabaseExecutor databaseExecutor;
-
-
     @Override
     public void onEnable() {
-        insnatce = this;
 
-        databaseExecutor = new DatabaseExecutor(new DatabaseConnector("jdbc:sqlite:sethome-db.sqlite"));
+        DatabaseExecutor databaseExecutor = new DatabaseExecutor(new DatabaseConnector("jdbc:sqlite:sethome-db.sqlite"));
 
-        getCommand("sethome").setExecutor(new SetHomeCommand());
-        getCommand("home").setExecutor(new HomeCommand());
+        getCommand("sethome").setExecutor(new SetHomeCommand(databaseExecutor, this));
+        getCommand("home").setExecutor(new HomeCommand(databaseExecutor, this));
 
         saveDefaultConfig();
 
@@ -31,11 +25,4 @@ public final class Sethome extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public static Sethome getInstance() {
-        return insnatce;
-    }
-
-    public DatabaseExecutor getDatabaseExecutor() {
-        return databaseExecutor;
-    }
 }

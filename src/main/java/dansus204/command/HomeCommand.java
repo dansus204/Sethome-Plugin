@@ -1,6 +1,7 @@
 package dansus204.command;
 
 import dansus204.Sethome;
+import dansus204.database.DatabaseExecutor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -15,6 +16,15 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public final class HomeCommand implements CommandExecutor {
+    private final DatabaseExecutor databaseExecutor;
+    private final Sethome pluginInstance;
+
+    public HomeCommand(DatabaseExecutor executor, Sethome pluginInstance) {
+        this.databaseExecutor = executor;
+        this.pluginInstance = pluginInstance;
+    }
+
+
     @Override
     public boolean onCommand(
             @NotNull CommandSender sender,
@@ -26,22 +36,22 @@ public final class HomeCommand implements CommandExecutor {
             return false;
         }
         if (player.getWorld().getEnvironment() != World.Environment.NORMAL) {
-            player.sendMessage(Component.text(Objects.requireNonNull(Sethome.getInstance().getConfig().getString("HOME_OVERWORLD_ERROR_MESSAGE"))));
+            player.sendMessage(Component.text(Objects.requireNonNull(pluginInstance.getConfig().getString("HOME_OVERWORLD_ERROR_MESSAGE"))));
             return false;
         }
 
 
         CompletableFuture.supplyAsync(() -> {
-            Vector vector = Sethome.getInstance().getDatabaseExecutor().getPoint(player);
+            Vector vector = databaseExecutor.getPoint(player);
             if (vector == null) {
-                player.sendMessage(Component.text(Objects.requireNonNull(Sethome.getInstance().getConfig().getString("NO_HOMEPOINT_MESSAGE"))));
+                player.sendMessage(Component.text(Objects.requireNonNull(pluginInstance.getConfig().getString("NO_HOMEPOINT_MESSAGE"))));
                 return false;
             }
-            player.sendMessage(Component.text(Objects.requireNonNull(Sethome.getInstance().getConfig().getString("TELEPORT_START_MESSAGE"))));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Sethome.getInstance(), () -> {
+            player.sendMessage(Component.text(Objects.requireNonNull(pluginInstance.getConfig().getString("TELEPORT_START_MESSAGE"))));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(pluginInstance, () -> {
                 player.teleport(vector.toLocation(player.getWorld()));
-                player.sendMessage(Component.text(Objects.requireNonNull(Sethome.getInstance().getConfig().getString("TELEPORT_FINISH_MESSAGE"))));
-            }, 20L * Integer.parseInt(Objects.requireNonNull(Sethome.getInstance().getConfig().getString("TELEPORT_TIMER"))));
+                player.sendMessage(Component.text(Objects.requireNonNull(pluginInstance.getConfig().getString("TELEPORT_FINISH_MESSAGE"))));
+            }, 20L * Integer.parseInt(Objects.requireNonNull(pluginInstance.getConfig().getString("TELEPORT_TIMER"))));
             return true;
         });
 
