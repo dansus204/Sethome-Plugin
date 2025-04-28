@@ -11,6 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
+
 public final class SetHomeCommand implements CommandExecutor {
 
     @Override
@@ -30,10 +32,14 @@ public final class SetHomeCommand implements CommandExecutor {
             return false;
         }
 
-        if (Sethome.INSTANCE.getDatabaseExecutor().addPoint(player, location)) {
-            player.sendMessage(Component.text("Точка дома сохранена"));
-        }
 
+        CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(
+                () -> Sethome.INSTANCE.getDatabaseExecutor().addPoint(player, location)
+        );
+
+        future.thenAccept((success) ->
+                player.sendMessage(Component.text(success? "Точка дома сохранена" : "Не удалось сохранить точку дома"))
+        );
 
         return false;
     }

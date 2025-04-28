@@ -12,6 +12,6 @@ commands:
     permission: sethome
 
 permissions:
-  zombies:
+  sethome:
     default: not op
     description: Gives access to sethome

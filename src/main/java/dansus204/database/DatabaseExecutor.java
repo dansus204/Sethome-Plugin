@@ -23,12 +23,10 @@ public class DatabaseExecutor {
     }
 
     public boolean addPoint(Player player, Location location) {
-        final String name = player.getName();
-
         try (PreparedStatement updateHome = connector.getConnection().prepareStatement(
                 "REPLACE INTO HomePoints(player_name, x, y, z) VALUES(?, ?, ?, ?);" );
         ) {
-            updateHome.setString(1, name);
+            updateHome.setString(1, player.getName());
             updateHome.setDouble(2, location.getX());
             updateHome.setDouble(3, location.getY());
             updateHome.setDouble(4, location.getZ());
@@ -40,9 +38,13 @@ public class DatabaseExecutor {
     }
 
     public Vector getPoint(Player player) {
-        final String name = player.getName();
-        try {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM HomePoints WHERE player_name = '" + name + "';");
+        try (
+                PreparedStatement getHome = connector.getConnection().prepareStatement(
+                        "SELECT * FROM HomePoints WHERE player_name = ?;"
+                )
+                ) {
+            getHome.setString(1, player.getName());
+            ResultSet resultSet = getHome.executeQuery();
             if (resultSet.next()) {
                 return new Vector(
                         resultSet.getDouble(2),
