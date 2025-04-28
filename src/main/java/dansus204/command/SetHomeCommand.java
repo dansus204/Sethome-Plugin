@@ -1,7 +1,7 @@
 package dansus204.command;
 
 
-import dansus204.database.DatabaseManager;
+import dansus204.Sethome;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,8 +30,9 @@ public final class SetHomeCommand implements CommandExecutor {
             return false;
         }
 
-        DatabaseManager.instance.addPoint(player, location);
-        player.sendMessage(Component.text("Точка дома сохранена"));
+        if (Sethome.INSTANCE.getDatabaseExecutor().addPoint(player, location)) {
+            player.sendMessage(Component.text("Точка дома сохранена"));
+        }
 
 
         return false;
